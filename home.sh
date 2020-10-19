@@ -1,0 +1,32 @@
+// CentOS 7 开启BBR //
+# 下载更换内核
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+yum --enablerepo=elrepo-kernel install kernel-ml -y
+
+# 更新 grub 系统引导文件并重启
+egrep ^menuentry /etc/grub2.cfg | cut -f 2 -d \'
+
+# default 0表示第一个内核设置为默认运行, 选择最新内核就对了
+grub2-set-default 0  
+
+# 重启
+reboot
+
+# 通用开启BBR
+# 开机后 uname -r 看看是不是内核4.9、4.10或4.11
+# 执行 lsmod | grep bbr，如果结果中没有 tcp_bbr 的话就先执行
+
+modprobe tcp_bbr
+echo "tcp_bbr" >> /etc/modules-load.d/modules.conf
+echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+
+# 保存生效
+sysctl -p
+
+# 执行
+lsmod | grep bbr
+# 如果结果都有bbr, 则证明你的内核已开启bbr。
+// CentOS 7 开启BBR //
+
