@@ -13,7 +13,7 @@ grub2-set-default 0
 # 重启
 reboot
 
-# 通用开启BBR
+# 开启BBR
 # 开机后 uname -r 看看是不是内核4.9、4.10或4.11
 # 执行 lsmod | grep bbr，如果结果中没有 tcp_bbr 的话就先执行
 
@@ -28,5 +28,15 @@ sysctl -p
 # 执行
 lsmod | grep bbr
 # 如果结果都有bbr, 则证明你的内核已开启bbr。
-// CentOS 7 开启BBR //
+
+// Azure 开启root登录 //
+vim /etc/ssh/sshd_config
+
+# 在 sshd_config 文件里的 “Authentication” 部分加上以下内容
+PermitRootLogin yes
+# 完成以后退出 vim 并保存
+
+service sshd restart # 重启 ssh 服务以应用更改
+passwd root # 直接修改 Root 用户的密码
+
 
